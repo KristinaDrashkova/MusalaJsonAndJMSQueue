@@ -1,32 +1,39 @@
 package com.musala.generala.service.iterator;
 
 import com.musala.generala.models.Employee;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
+import java.io.Reader;
 import java.util.*;
 
 class EmployeeIterator implements Iterator<Employee> {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeIterator.class);
     private Employee cachedEmployee;
-    private BufferedReader bufferedReader;
     private boolean isFinished = false;
     private String name;
     private int age;
     private double lengthOfService;
-    private String fieldSeparator = "=";
-    private String employeeSeparator = "<<>>";
     private Map<String, String> applicationPropertiesData;
     private String nameLabel = "name";
     private String ageLabel = "age";
     private String lengthOfServiceLabel = "lengthOfService";
+    private JsonParser parser;
+    private Reader reader;
 
-    EmployeeIterator(BufferedReader bufferedReader, Map<String, String> applicationPropertiesData) {
-        this.bufferedReader = bufferedReader;
+    EmployeeIterator(Reader reader, Map<String, String> applicationPropertiesData) {
         this.applicationPropertiesData = applicationPropertiesData;
+        this.reader = reader;
+        this.parser = Json.createParser(reader);
+        if (this.applicationPropertiesData.size() > 0) {
+            this.nameLabel = getNameLabel();
+            this.ageLabel = getAgeLabel();
+            this.lengthOfServiceLabel = getLengthOfServiceLabel();
+        }
     }
 
     @Override
@@ -40,7 +47,6 @@ class EmployeeIterator implements Iterator<Employee> {
         return !(this.isFinished && this.cachedEmployee == null);
     }
 
-
     @Override
     public Employee next() {
         Employee currentEmployee = null;
@@ -52,47 +58,35 @@ class EmployeeIterator implements Iterator<Employee> {
     }
 
     private void parseEmployee() {
-        try {
-            String line;
-            try {
-                this.employeeSeparator = getEmployeeSeparator();
-            } catch (IOException e) {}
-            while ((line = this.bufferedReader.readLine()) != null && !line.trim().equals(employeeSeparator)) {
-                parseLine(line);
+        JsonParser.Event event;
+        while (this.parser.hasNext() && (event = this.parser.next()) != JsonParser.Event.END_OBJECT) {
+            if (event == JsonParser.Event.END_ARRAY) {
+                close();
+                return;
             }
-            try {
-                if (isEmployee()) {
-                    this.cachedEmployee = new Employee(this.name, this.age, this.lengthOfService);
+            if (event == JsonParser.Event.KEY_NAME) {
+                String key = this.parser.getString();
+                if (key.equals(this.nameLabel)) {
+                    this.parser.next();
+                    this.name = this.parser.getString();
+                } else if (key.equals(this.ageLabel)) {
+                    this.parser.next();
+                    this.age = this.parser.getInt();
+                } else if (key.equals(this.lengthOfServiceLabel)) {
+                    this.parser.next();
+                    this.lengthOfService = Double.parseDouble(this.parser.getString());
                 }
-            } catch (IllegalArgumentException e) {
-                LOGGER.error(e.getMessage());
             }
-            if (line == null) {
-                this.isFinished = true;
+        }
+        try {
+            if (isEmployee()) {
+                this.cachedEmployee = new Employee(this.name, this.age, this.lengthOfService);
             }
-        } catch (IOException ioe) {
-            close();
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage());
         }
     }
 
-    private void parseLine(String line) {
-        try {
-            this.fieldSeparator = getFieldSeparator();
-            this.nameLabel = getNameLabel();
-            this.ageLabel = getAgeLabel();
-            this.lengthOfServiceLabel = getLengthOfServiceLabel();
-        } catch (IOException e) {}
-        String[] lineData = line.split(fieldSeparator);
-        String key = lineData[0];
-        String value = lineData.length == 1 ? "" : lineData[1].trim();
-        if (key.equals(this.nameLabel)) {
-            this.name = value;
-        } else if (key.equals(this.ageLabel)) {
-            this.age = Integer.parseInt(value);
-        } else if (key.equals(this.lengthOfServiceLabel)) {
-            this.lengthOfService = Double.parseDouble(value);
-        }
-    }
 
     private boolean isEmployee() {
         return !(StringUtils.isBlank(this.name) && this.age == 0 && this.lengthOfService == 0.0);
@@ -101,15 +95,7 @@ class EmployeeIterator implements Iterator<Employee> {
     private void close() {
         this.isFinished = true;
         this.cachedEmployee = null;
-        IOUtils.closeQuietly(this.bufferedReader);
-    }
-
-    private String getEmployeeSeparator() throws IOException {
-        return this.applicationPropertiesData.get("employeeSeparator");
-    }
-
-    private String getFieldSeparator() throws IOException {
-        return this.applicationPropertiesData.get("fieldSeparator");
+        IOUtils.closeQuietly(this.reader);
     }
 
     private String getNameLabel() {

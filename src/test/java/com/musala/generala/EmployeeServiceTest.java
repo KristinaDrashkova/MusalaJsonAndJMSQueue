@@ -1,7 +1,7 @@
 package com.musala.generala;
 
 import com.musala.generala.exeptions.NoEmployeesException;
-import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromFile;
+import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
 import com.musala.generala.service.EmployeeService;
 import com.musala.generala.service.iterator.IEmployeeIteratorFactory;
 import org.junit.*;
@@ -19,7 +19,7 @@ public class EmployeeServiceTest {
     @Before
     public void initialize() throws IOException {
         this.mockedEmployeeIterator = Mockito.mock(Iterator.class);
-        IEmployeeIteratorFactory mockedEmployeeIteratorFactory = Mockito.mock(EmployeeIteratorFactoryFromFile.class);
+        IEmployeeIteratorFactory mockedEmployeeIteratorFactory = Mockito.mock(EmployeeIteratorFactoryFromQueue.class);
         this.employeeService = new EmployeeService(mockedEmployeeIteratorFactory);
         Mockito.when(mockedEmployeeIteratorFactory.createEmployeeIterator())
                 .thenReturn(this.mockedEmployeeIterator);

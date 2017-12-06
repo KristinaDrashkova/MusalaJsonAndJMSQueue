@@ -1,38 +1,35 @@
 package com.musala.generala.service.iterator;
 
 import com.musala.generala.models.Employee;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.jms.*;
+import javax.jms.Queue;
+import java.io.*;
 import java.util.*;
 
-public class EmployeeIteratorFactoryFromFile implements IEmployeeIteratorFactory {
-    private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromFile.class);
-    private String path;
+public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactory {
+    private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromQueue.class);
+    private String data;
     private String applicationPropertiesFilePath;
 
-    public EmployeeIteratorFactoryFromFile(String path, String appPropFilePath) {
-        this.path = path;
+
+    public EmployeeIteratorFactoryFromQueue(String appPropFilePath) throws JMSException {
         this.applicationPropertiesFilePath = appPropFilePath;
+        this.data = consumeMessagesFromQueue();
     }
 
     public Iterator<Employee> createEmployeeIterator() throws IOException {
-        BufferedReader bufferedReader;
         Map<String, String> applicationPropertiesData;
         try {
-            bufferedReader = new BufferedReader(new FileReader(path));
             applicationPropertiesData = getDataFromApplicationPropertiesFile();
         } catch (IOException e) {
-            LOGGER.error("There was problem loading the file: {}", path);
+            LOGGER.error("There was problem loading the file: {}", applicationPropertiesFilePath);
             throw e;
         }
-        return new EmployeeIterator(bufferedReader, applicationPropertiesData);
+        return new EmployeeIterator(new StringReader(data), applicationPropertiesData);
     }
-
 
     private Map<String, String> getDataFromApplicationPropertiesFile() throws IOException {
         Map<String, String> applicationPropertiesData = new HashMap<>();
@@ -56,5 +53,29 @@ public class EmployeeIteratorFactoryFromFile implements IEmployeeIteratorFactory
         }
 
         return applicationPropertiesData;
+    }
+
+    private static String consumeMessagesFromQueue() throws JMSException {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
+        Connection connection;
+        String data = "";
+        try {
+            connection = factory.createConnection();
+            connection.start();
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue("test_queue");
+            MessageConsumer consumer = session.createConsumer(queue);
+
+            Message message = consumer.receive();
+            if (message instanceof TextMessage) {
+                data = ((TextMessage) message).getText();
+            }
+            session.close();
+            connection.close();
+        } catch (JMSException e) {
+            LOGGER.error("There was problem with the connection to MQ");
+            throw e;
+        }
+        return data;
     }
 }

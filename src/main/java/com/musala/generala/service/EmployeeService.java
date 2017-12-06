@@ -55,7 +55,10 @@ public class EmployeeService implements IEmployeeService {
             employeeAgesSum += employee.getAge();
             counter++;
         }
-        return employeeAgesSum / counter;
+        if (counter > 0) {
+            return employeeAgesSum / counter;
+        }
+        throw new NoEmployeesException("There are no employees");
     }
 
     /**
@@ -77,7 +80,10 @@ public class EmployeeService implements IEmployeeService {
             employeeLengthOfServiceSum += employee.getLengthOfService();
             counter++;
         }
-        return employeeLengthOfServiceSum / counter;
+        if (counter > 0) {
+            return employeeLengthOfServiceSum / counter;
+        }
+        throw new NoEmployeesException("There are no employees");
     }
 
     /**
