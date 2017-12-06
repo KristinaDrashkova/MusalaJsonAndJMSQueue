@@ -14,7 +14,7 @@ import java.util.*;
 class EmployeeIterator implements Iterator<Employee> {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeIterator.class);
     private Employee cachedEmployee;
-    private boolean isFinished = false;
+    private boolean isFinished;
     private String name;
     private int age;
     private double lengthOfService;
@@ -86,7 +86,6 @@ class EmployeeIterator implements Iterator<Employee> {
             LOGGER.error(e.getMessage());
         }
     }
-
 
     private boolean isEmployee() {
         return !(StringUtils.isBlank(this.name) && this.age == 0 && this.lengthOfService == 0.0);

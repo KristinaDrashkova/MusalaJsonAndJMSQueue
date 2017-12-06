@@ -12,6 +12,7 @@ import java.util.*;
 public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactory {
     private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromQueue.class);
     private static final String QUEUE_NAME = "test_queue";
+    private static final String BROKER_URL = "tcp://localhost:61616";
     private String data;
     private String applicationPropertiesFilePath;
 
@@ -57,9 +58,9 @@ public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactor
     }
 
     private static String consumeMessagesFromQueue() throws JMSException {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(BROKER_URL);
         Connection connection;
-        String data = "";
+        StringBuilder data = new StringBuilder();
         try {
             connection = factory.createConnection();
             connection.start();
@@ -67,16 +68,21 @@ public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactor
             Queue queue = session.createQueue(QUEUE_NAME);
             MessageConsumer consumer = session.createConsumer(queue);
 
-            Message message = consumer.receive();
-            if (message instanceof TextMessage) {
-                data = ((TextMessage) message).getText();
+            while (true) {
+                Message message = consumer.receive(2500);
+                if (message instanceof TextMessage) {
+                    data.append(((TextMessage)message).getText());
+                }
+                else{
+                    session.close();
+                    connection.close();
+                    break;
+                }
             }
-            session.close();
-            connection.close();
         } catch (JMSException e) {
             LOGGER.error("There was problem with the connection to MQ");
             throw e;
         }
-        return data;
+        return data.toString();
     }
 }
