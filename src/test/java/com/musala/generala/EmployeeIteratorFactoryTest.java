@@ -10,7 +10,6 @@ import java.io.IOException;
 
 
 public class EmployeeIteratorFactoryTest {
-    private static final String INVALID_PATH = "src\\main\\java\\com\\test\\resources\\invalid file path.txt";
     private static final String APPLICATION_PROPERTIES_FILE_PATH = "src/main/resources/application.properties";
 
     @Rule
@@ -22,7 +21,6 @@ public class EmployeeIteratorFactoryTest {
         employeeIteratorFactory.createEmployeeIterator();
         this.thrown.expect(IOException.class);
         this.thrown.reportMissingExceptionWithMessage("Exception expected");
-        this.thrown.expectMessage("Could not find file " + INVALID_PATH +
-                ", Original exception message: " + INVALID_PATH + " (The system cannot find the file specified)");
+        this.thrown.expectMessage("Could not find file ");
     }
 }

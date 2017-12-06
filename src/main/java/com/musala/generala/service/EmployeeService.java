@@ -3,6 +3,7 @@ package com.musala.generala.service;
 import com.musala.generala.exeptions.NoEmployeesException;
 import com.musala.generala.models.Employee;
 import com.musala.generala.service.iterator.IEmployeeIteratorFactory;
+import com.musala.generala.strategy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +14,18 @@ import java.util.stream.Collectors;
 public class EmployeeService implements IEmployeeService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
     private IEmployeeIteratorFactory employeeIteratorFactory;
+    private IStrategy operationCalculateAverageAge;
+    private IStrategy operationCalculateAverageLengthOfService;
+    private IStrategy operationFindMaxLengthOfService;
+    private IStrategy operationFindMostCommonCharacters;
+    private double counter = 0.0;
 
     public EmployeeService(IEmployeeIteratorFactory employeeIteratorFactory) {
         this.employeeIteratorFactory = employeeIteratorFactory;
+        this.operationCalculateAverageAge = new OperationCalculateAverageAge();
+        this.operationCalculateAverageLengthOfService = new OperationCalculateAverageLengthOfService();
+        this.operationFindMaxLengthOfService = new OperationFindMaxLengthOfService();
+        this.operationFindMostCommonCharacters = new OperationFindMostCommonCharacters();
     }
 
     @Override
@@ -25,6 +35,7 @@ public class EmployeeService implements IEmployeeService {
             LOGGER.error("There are no employees");
             throw new NoEmployeesException("There are no employees");
         } else {
+            iterate();
             double averageAgeOfEmployees = averageAgeOfEmployees();
             double averageLengthOfServiceOfEmployees = averageLengthOfServiceOfEmployees();
             List<Character> mostCommonCharactersInEmployeesNames = mostCommonCharactersInEmployeesNames(3);
@@ -44,21 +55,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageAgeOfEmployees() throws IOException, NoEmployeesException {
-        Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
-        if (!validateEmployeeIterator(employeeIterator)) {
-            throw new NoEmployeesException("There are no employees");
-        }
-        long employeeAgesSum = 0;
-        double counter = 0.0;
-        while (employeeIterator.hasNext()) {
-            Employee employee = employeeIterator.next();
-            employeeAgesSum += employee.getAge();
-            counter++;
-        }
-        if (counter > 0) {
-            return employeeAgesSum / counter;
-        }
-        throw new NoEmployeesException("There are no employees");
+        return (Integer) operationCalculateAverageAge.doOperation() / counter;
     }
 
     /**
@@ -69,21 +66,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageLengthOfServiceOfEmployees() throws IOException, NoEmployeesException {
-        Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
-        if (!validateEmployeeIterator(employeeIterator)) {
-            throw new NoEmployeesException("There are no employees");
-        }
-        double employeeLengthOfServiceSum = 0.0;
-        double counter = 0.0;
-        while (employeeIterator.hasNext()) {
-            Employee employee = employeeIterator.next();
-            employeeLengthOfServiceSum += employee.getLengthOfService();
-            counter++;
-        }
-        if (counter > 0) {
-            return employeeLengthOfServiceSum / counter;
-        }
-        throw new NoEmployeesException("There are no employees");
+        return (Double) operationCalculateAverageLengthOfService.doOperation() / counter;
     }
 
     /**
@@ -94,15 +77,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double maximumLengthOfServiceOfEmployee() throws IOException {
-        Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
-        double maxLengthOfService = 0;
-        while (employeeIterator.hasNext()) {
-            Employee employee = employeeIterator.next();
-            if (employee.getLengthOfService() > maxLengthOfService) {
-                maxLengthOfService = employee.getLengthOfService();
-            }
-        }
-        return maxLengthOfService;
+        return (Double) operationFindMaxLengthOfService.doOperation();
     }
 
     /**
@@ -114,7 +89,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public List<Character> mostCommonCharactersInEmployeesNames(int count) throws IOException {
-        Map<Character, Integer> characterIntegerMap = countCharactersInEmployeeNames();
+        Map<Character, Integer> characterIntegerMap = operationFindMostCommonCharacters.doOperation();
         if (count > characterIntegerMap.size()) {
             count = characterIntegerMap.size();
         }
@@ -131,25 +106,25 @@ public class EmployeeService implements IEmployeeService {
      * @return collection with character for a key and its occurrence
      * in all the names of all employees as a value
      */
-    private Map<Character, Integer> countCharactersInEmployeeNames() throws IOException {
-        Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
-        Map<Character, Integer> countCharactersInNames = new HashMap<>();
-        while (employeeIterator.hasNext()) {
-            Employee employee = employeeIterator.next();
-            for (char c : employee.getName().toLowerCase().toCharArray()) {
-                if (!countCharactersInNames.containsKey(c)) {
-                    countCharactersInNames.put(c, 0);
-                }
-                int value = countCharactersInNames.get(c);
-                value += 1;
-                countCharactersInNames.put(c, value);
-            }
-        }
-
-        return countCharactersInNames;
-    }
 
     private boolean validateEmployeeIterator(Iterator<Employee> employeeIterator) {
         return employeeIterator.hasNext();
     }
+
+
+    private void iterate() throws IOException, NoEmployeesException {
+        Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
+        if (!validateEmployeeIterator(employeeIterator)) {
+            throw new NoEmployeesException("There are no employees");
+        }
+        while (employeeIterator.hasNext()) {
+            Employee employee = employeeIterator.next();
+            counter++;
+            operationCalculateAverageAge.doOperation(employee);
+            operationCalculateAverageLengthOfService.doOperation(employee);
+            operationFindMaxLengthOfService.doOperation(employee);
+            operationFindMostCommonCharacters.doOperation(employee);
+        }
+    }
+
 }

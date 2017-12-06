@@ -11,6 +11,7 @@ import java.util.*;
 
 public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactory {
     private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromQueue.class);
+    private static final String QUEUE_NAME = "test_queue";
     private String data;
     private String applicationPropertiesFilePath;
 
@@ -63,7 +64,7 @@ public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactor
             connection = factory.createConnection();
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Queue queue = session.createQueue("test_queue");
+            Queue queue = session.createQueue(QUEUE_NAME);
             MessageConsumer consumer = session.createConsumer(queue);
 
             Message message = consumer.receive();
