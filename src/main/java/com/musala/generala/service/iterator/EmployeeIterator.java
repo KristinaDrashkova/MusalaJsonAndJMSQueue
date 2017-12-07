@@ -39,21 +39,21 @@ class EmployeeIterator implements Iterator<Employee> {
 
     @Override
     public boolean hasNext() {
-        if (this.cachedEmployee != null) {
+        if (cachedEmployee != null) {
             return true;
-        } else if (this.isFinished) {
+        } else if (isFinished) {
             return false;
         }
         parseEmployee();
-        return !(this.isFinished && this.cachedEmployee == null);
+        return !(isFinished && cachedEmployee == null);
     }
 
     @Override
     public Employee next() {
         Employee currentEmployee = null;
         if (hasNext()) {
-            currentEmployee = this.cachedEmployee;
-            this.cachedEmployee = null;
+            currentEmployee = cachedEmployee;
+            cachedEmployee = null;
         }
         return currentEmployee;
     }
@@ -61,22 +61,22 @@ class EmployeeIterator implements Iterator<Employee> {
     private void parseEmployee() {
         try {
             JsonParser.Event event;
-            while (this.parser.hasNext() && (event = this.parser.next()) != JsonParser.Event.END_OBJECT) {
+            while (parser.hasNext() && (event = parser.next()) != JsonParser.Event.END_OBJECT) {
                 if (event == JsonParser.Event.END_ARRAY) {
                     close();
                     return;
                 }
                 if (event == JsonParser.Event.KEY_NAME) {
-                    String key = this.parser.getString();
-                    if (key.equals(this.nameLabel)) {
-                        this.parser.next();
-                        this.name = this.parser.getString();
-                    } else if (key.equals(this.ageLabel)) {
-                        this.parser.next();
-                        this.age = this.parser.getInt();
-                    } else if (key.equals(this.lengthOfServiceLabel)) {
-                        this.parser.next();
-                        this.lengthOfService = Double.parseDouble(this.parser.getString());
+                    String key = parser.getString();
+                    if (key.equals(nameLabel)) {
+                        parser.next();
+                        name = parser.getString();
+                    } else if (key.equals(ageLabel)) {
+                        parser.next();
+                        age = parser.getInt();
+                    } else if (key.equals(lengthOfServiceLabel)) {
+                        parser.next();
+                        lengthOfService = Double.parseDouble(parser.getString());
                     }
                 }
             }
@@ -86,7 +86,7 @@ class EmployeeIterator implements Iterator<Employee> {
         }
         try {
             if (isEmployee()) {
-                this.cachedEmployee = new Employee(this.name, this.age, this.lengthOfService);
+                cachedEmployee = new Employee(name, age, lengthOfService);
             }
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage());
@@ -94,24 +94,24 @@ class EmployeeIterator implements Iterator<Employee> {
     }
 
     private boolean isEmployee() {
-        return !(StringUtils.isBlank(this.name) && this.age == 0 && this.lengthOfService == 0.0);
+        return !(StringUtils.isBlank(name) && age == 0 && lengthOfService == 0.0);
     }
 
     private void close() {
-        this.isFinished = true;
-        this.cachedEmployee = null;
-        IOUtils.closeQuietly(this.reader);
+        isFinished = true;
+        cachedEmployee = null;
+        IOUtils.closeQuietly(reader);
     }
 
     private String getNameLabel() {
-        return this.applicationPropertiesData.get("nameLabel");
+        return applicationPropertiesData.get("nameLabel");
     }
 
     private String getAgeLabel() {
-        return this.applicationPropertiesData.get("ageLabel");
+        return applicationPropertiesData.get("ageLabel");
     }
 
     private String getLengthOfServiceLabel() {
-        return this.applicationPropertiesData.get("lengthOfServiceLabel");
+        return applicationPropertiesData.get("lengthOfServiceLabel");
     }
 }

@@ -5,6 +5,6 @@ import com.musala.generala.models.Employee;
 import java.io.IOException;
 import java.util.Iterator;
 
-public interface IEmployeeIteratorFactory {
+public interface EmployeeIteratorFactory {
     Iterator<Employee> createEmployeeIterator() throws IOException;
 }

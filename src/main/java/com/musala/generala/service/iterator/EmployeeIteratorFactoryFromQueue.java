@@ -10,7 +10,7 @@ import javax.jms.Queue;
 import java.io.*;
 import java.util.*;
 
-public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactory {
+public class EmployeeIteratorFactoryFromQueue implements EmployeeIteratorFactory {
     private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromQueue.class);
     private static final String QUEUE_NAME = "test_queue";
     private String queueUrl;

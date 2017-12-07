@@ -1,7 +1,7 @@
 package com.musala.generala;
 
 import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
-import com.musala.generala.service.iterator.IEmployeeIteratorFactory;
+import com.musala.generala.service.iterator.EmployeeIteratorFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,7 +18,7 @@ public class EmployeeIteratorFactoryTest {
 
     @Test(expected = IOException.class)
     public void getEmployeeIteratorShouldThrowExceptionWithInvalidPath() throws Exception {
-        IEmployeeIteratorFactory employeeIteratorFactory = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL);
+        EmployeeIteratorFactory employeeIteratorFactory = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL);
         employeeIteratorFactory.createEmployeeIterator();
         this.thrown.expect(IOException.class);
         this.thrown.reportMissingExceptionWithMessage("Exception expected");
