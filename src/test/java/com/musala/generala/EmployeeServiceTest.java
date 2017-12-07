@@ -6,8 +6,10 @@ import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
 import com.musala.generala.service.EmployeeService;
 import org.junit.*;
 import org.mockito.Mockito;
+
 import java.io.*;
 import java.util.Iterator;
+
 import static com.musala.generala.PredefinedEmployeeTestSubjects.*;
 
 public class EmployeeServiceTest {

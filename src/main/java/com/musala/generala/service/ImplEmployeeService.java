@@ -44,5 +44,4 @@ public class ImplEmployeeService implements EmployeeService {
             strategies.forEach(s -> s.addEmployee(employee));
         }
     }
-
 }

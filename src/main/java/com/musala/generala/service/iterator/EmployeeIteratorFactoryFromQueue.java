@@ -48,9 +48,6 @@ public class EmployeeIteratorFactoryFromQueue implements EmployeeIteratorFactory
                 String value = properties.getProperty(key);
                 applicationPropertiesData.put(key, value);
             }
-        } catch (FileNotFoundException e) {
-            LOGGER.error("There is no such file: {}", applicationPropertiesFilePath);
-            throw e;
         } catch (IOException e) {
             LOGGER.error("There was problem loading the file: {}", applicationPropertiesFilePath);
             throw e;
