@@ -1,4 +1,4 @@
-package com.musala.generala.strategy;
+package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class OperationFindMostCommonCharacters implements IStrategy {
     private Map<Character, Integer> characterIntegerMap;
+
     @Override
     @SuppressWarnings("unchecked")
     public Map<Character, Integer> doOperation(Employee... employee) {

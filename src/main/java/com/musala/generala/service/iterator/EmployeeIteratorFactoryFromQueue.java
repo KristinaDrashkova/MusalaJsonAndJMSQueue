@@ -4,6 +4,7 @@ import com.musala.generala.models.Employee;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.jms.*;
 import javax.jms.Queue;
 import java.io.*;
@@ -12,13 +13,14 @@ import java.util.*;
 public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactory {
     private final static Logger LOGGER = (Logger) LoggerFactory.getLogger(EmployeeIteratorFactoryFromQueue.class);
     private static final String QUEUE_NAME = "test_queue";
-    private static final String BROKER_URL = "tcp://localhost:61616";
+    private String queueUrl;
     private String data;
     private String applicationPropertiesFilePath;
 
 
-    public EmployeeIteratorFactoryFromQueue(String appPropFilePath) throws JMSException {
+    public EmployeeIteratorFactoryFromQueue(String appPropFilePath, String queueUrl) throws JMSException {
         this.applicationPropertiesFilePath = appPropFilePath;
+        this.queueUrl = queueUrl;
         this.data = consumeMessagesFromQueue();
     }
 
@@ -57,8 +59,8 @@ public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactor
         return applicationPropertiesData;
     }
 
-    private static String consumeMessagesFromQueue() throws JMSException {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(BROKER_URL);
+    private String consumeMessagesFromQueue() throws JMSException {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(queueUrl);
         Connection connection;
         StringBuilder data = new StringBuilder();
         try {
@@ -69,11 +71,10 @@ public class EmployeeIteratorFactoryFromQueue implements IEmployeeIteratorFactor
             MessageConsumer consumer = session.createConsumer(queue);
 
             while (true) {
-                Message message = consumer.receive(2500);
+                Message message = consumer.receive(500);
                 if (message instanceof TextMessage) {
-                    data.append(((TextMessage)message).getText());
-                }
-                else{
+                    data.append(((TextMessage) message).getText());
+                } else {
                     session.close();
                     connection.close();
                     break;

@@ -12,17 +12,18 @@ import java.util.Iterator;
 
 public class EmployeeIteratorTest {
     private static final String APPLICATION_PROPERTIES_FILE_PATH = "src/main/resources/application.properties";
+    private static final String BROKER_URL = "tcp://localhost:61616";
 
     @Test()
     public void hasNextShouldReturnFalseWithEmptyCollection() throws IOException, JMSException {
-        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH)
+        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL)
                 .createEmployeeIterator();
         Assert.assertEquals(false, employeeIterator.hasNext());
     }
 
     @Test
     public void hasNextAndNextShouldWorkCorrectly() throws IOException, JMSException {
-        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH)
+        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL)
                 .createEmployeeIterator();
         Assert.assertEquals(true, employeeIterator.hasNext());
         employeeIterator.next();

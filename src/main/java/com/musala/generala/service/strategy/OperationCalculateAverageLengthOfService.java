@@ -1,9 +1,10 @@
-package com.musala.generala.strategy;
+package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
 public class OperationCalculateAverageLengthOfService implements IStrategy {
     private double lengthOfService;
+
     @Override
     @SuppressWarnings("unchecked")
     public Double doOperation(Employee... employee) {

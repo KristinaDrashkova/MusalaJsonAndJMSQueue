@@ -1,9 +1,10 @@
-package com.musala.generala.strategy;
+package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
 public class OperationCalculateAverageAge implements IStrategy {
     private int age;
+
     @Override
     @SuppressWarnings("unchecked")
     public Integer doOperation(Employee... employee) {

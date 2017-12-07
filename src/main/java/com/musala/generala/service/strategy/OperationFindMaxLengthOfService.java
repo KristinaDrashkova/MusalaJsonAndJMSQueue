@@ -1,9 +1,10 @@
-package com.musala.generala.strategy;
+package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
 public class OperationFindMaxLengthOfService implements IStrategy {
     private double maxLengthOfService = 0;
+
     @Override
     @SuppressWarnings("unchecked")
     public Double doOperation(Employee... employee) {

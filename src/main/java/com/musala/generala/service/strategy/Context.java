@@ -1,4 +1,4 @@
-package com.musala.generala.strategy;
+package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
@@ -9,7 +9,7 @@ public class Context {
         this.strategy = strategy;
     }
 
-    public <T>T executeStrategy(Employee... employees) {
+    public <T> T executeStrategy(Employee... employees) {
         return strategy.doOperation(employees);
     }
 }

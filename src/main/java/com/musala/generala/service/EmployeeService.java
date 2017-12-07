@@ -3,7 +3,7 @@ package com.musala.generala.service;
 import com.musala.generala.exeptions.NoEmployeesException;
 import com.musala.generala.models.Employee;
 import com.musala.generala.service.iterator.IEmployeeIteratorFactory;
-import com.musala.generala.strategy.*;
+import com.musala.generala.service.strategy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,18 +14,19 @@ import java.util.stream.Collectors;
 public class EmployeeService implements IEmployeeService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
     private IEmployeeIteratorFactory employeeIteratorFactory;
-    private Context averageAgeContext;
-    private Context averageLengthContext;
-    private Context maxLengthOfServiceContext;
-    private Context mostCommonCharactersContext;
+    private IStrategy operationCalculateAverageAge;
+    private IStrategy operationCalculateAverageLengthOfService;
+    private IStrategy operationFindMaxLengthOfService;
+    private IStrategy operationFindMostCommonCharacters;
+    private Context context;
     private double counter = 0.0;
 
     public EmployeeService(IEmployeeIteratorFactory employeeIteratorFactory) {
         this.employeeIteratorFactory = employeeIteratorFactory;
-        this.averageAgeContext = new Context(new OperationCalculateAverageAge());
-        this.averageLengthContext = new Context(new OperationCalculateAverageLengthOfService());
-        this.maxLengthOfServiceContext = new Context(new OperationFindMaxLengthOfService());
-        this.mostCommonCharactersContext = new Context(new OperationFindMostCommonCharacters());
+        this.operationCalculateAverageAge = new OperationCalculateAverageAge();
+        this.operationCalculateAverageLengthOfService = new OperationCalculateAverageLengthOfService();
+        this.operationFindMaxLengthOfService = new OperationFindMaxLengthOfService();
+        this.operationFindMostCommonCharacters = new OperationFindMostCommonCharacters();
     }
 
     @Override
@@ -55,7 +56,8 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageAgeOfEmployees() throws IOException, NoEmployeesException {
-        return (Integer) averageAgeContext.executeStrategy() / counter;
+        context = new Context(operationCalculateAverageAge);
+        return (Integer) context.executeStrategy() / counter;
     }
 
     /**
@@ -66,7 +68,8 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageLengthOfServiceOfEmployees() throws IOException, NoEmployeesException {
-        return (Double) averageLengthContext.executeStrategy() / counter;
+        context = new Context(operationCalculateAverageLengthOfService);
+        return (Double) operationCalculateAverageLengthOfService.doOperation() / counter;
     }
 
     /**
@@ -77,7 +80,8 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double maximumLengthOfServiceOfEmployee() throws IOException {
-        return (Double) maxLengthOfServiceContext.executeStrategy();
+        context = new Context(operationFindMaxLengthOfService);
+        return (Double) operationFindMaxLengthOfService.doOperation();
     }
 
     /**
@@ -89,7 +93,8 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public List<Character> mostCommonCharactersInEmployeesNames(int count) throws IOException {
-        Map<Character, Integer> characterIntegerMap = mostCommonCharactersContext.executeStrategy();
+        context = new Context(operationFindMostCommonCharacters);
+        Map<Character, Integer> characterIntegerMap = operationFindMostCommonCharacters.doOperation();
         if (count > characterIntegerMap.size()) {
             count = characterIntegerMap.size();
         }
@@ -120,10 +125,14 @@ public class EmployeeService implements IEmployeeService {
         while (employeeIterator.hasNext()) {
             Employee employee = employeeIterator.next();
             counter++;
-            averageAgeContext.executeStrategy(employee);
-            averageLengthContext.executeStrategy(employee);
-            maxLengthOfServiceContext.executeStrategy(employee);
-            mostCommonCharactersContext.executeStrategy(employee);
+            context = new Context(operationCalculateAverageAge);
+            context.executeStrategy(employee);
+            context = new Context(operationCalculateAverageLengthOfService);
+            context.executeStrategy(employee);
+            context = new Context(operationFindMaxLengthOfService);
+            context.executeStrategy(employee);
+            context = new Context(operationFindMostCommonCharacters);
+            context.executeStrategy(employee);
         }
     }
 

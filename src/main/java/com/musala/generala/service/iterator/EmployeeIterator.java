@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParsingException;
 import java.io.Reader;
 import java.util.*;
 
@@ -58,25 +59,30 @@ class EmployeeIterator implements Iterator<Employee> {
     }
 
     private void parseEmployee() {
-        JsonParser.Event event;
-        while (this.parser.hasNext() && (event = this.parser.next()) != JsonParser.Event.END_OBJECT) {
-            if (event == JsonParser.Event.END_ARRAY) {
-                close();
-                return;
-            }
-            if (event == JsonParser.Event.KEY_NAME) {
-                String key = this.parser.getString();
-                if (key.equals(this.nameLabel)) {
-                    this.parser.next();
-                    this.name = this.parser.getString();
-                } else if (key.equals(this.ageLabel)) {
-                    this.parser.next();
-                    this.age = this.parser.getInt();
-                } else if (key.equals(this.lengthOfServiceLabel)) {
-                    this.parser.next();
-                    this.lengthOfService = Double.parseDouble(this.parser.getString());
+        try {
+            JsonParser.Event event;
+            while (this.parser.hasNext() && (event = this.parser.next()) != JsonParser.Event.END_OBJECT) {
+                if (event == JsonParser.Event.END_ARRAY) {
+                    close();
+                    return;
+                }
+                if (event == JsonParser.Event.KEY_NAME) {
+                    String key = this.parser.getString();
+                    if (key.equals(this.nameLabel)) {
+                        this.parser.next();
+                        this.name = this.parser.getString();
+                    } else if (key.equals(this.ageLabel)) {
+                        this.parser.next();
+                        this.age = this.parser.getInt();
+                    } else if (key.equals(this.lengthOfServiceLabel)) {
+                        this.parser.next();
+                        this.lengthOfService = Double.parseDouble(this.parser.getString());
+                    }
                 }
             }
+        } catch (JsonParsingException e) {
+            LOGGER.error("There was a problem with parsing");
+            throw e;
         }
         try {
             if (isEmployee()) {
