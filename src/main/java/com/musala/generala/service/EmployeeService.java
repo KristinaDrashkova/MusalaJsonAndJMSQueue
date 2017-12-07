@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 public class EmployeeService implements IEmployeeService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
     private IEmployeeIteratorFactory employeeIteratorFactory;
-    private IStrategy operationCalculateAverageAge;
-    private IStrategy operationCalculateAverageLengthOfService;
-    private IStrategy operationFindMaxLengthOfService;
-    private IStrategy operationFindMostCommonCharacters;
+    private Context averageAgeContext;
+    private Context averageLengthContext;
+    private Context maxLengthOfServiceContext;
+    private Context mostCommonCharactersContext;
     private double counter = 0.0;
 
     public EmployeeService(IEmployeeIteratorFactory employeeIteratorFactory) {
         this.employeeIteratorFactory = employeeIteratorFactory;
-        this.operationCalculateAverageAge = new OperationCalculateAverageAge();
-        this.operationCalculateAverageLengthOfService = new OperationCalculateAverageLengthOfService();
-        this.operationFindMaxLengthOfService = new OperationFindMaxLengthOfService();
-        this.operationFindMostCommonCharacters = new OperationFindMostCommonCharacters();
+        this.averageAgeContext = new Context(new OperationCalculateAverageAge());
+        this.averageLengthContext = new Context(new OperationCalculateAverageLengthOfService());
+        this.maxLengthOfServiceContext = new Context(new OperationFindMaxLengthOfService());
+        this.mostCommonCharactersContext = new Context(new OperationFindMostCommonCharacters());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageAgeOfEmployees() throws IOException, NoEmployeesException {
-        return (Integer) operationCalculateAverageAge.doOperation() / counter;
+        return (Integer) averageAgeContext.executeStrategy() / counter;
     }
 
     /**
@@ -66,7 +66,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double averageLengthOfServiceOfEmployees() throws IOException, NoEmployeesException {
-        return (Double) operationCalculateAverageLengthOfService.doOperation() / counter;
+        return (Double) averageLengthContext.executeStrategy() / counter;
     }
 
     /**
@@ -77,7 +77,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public double maximumLengthOfServiceOfEmployee() throws IOException {
-        return (Double) operationFindMaxLengthOfService.doOperation();
+        return (Double) maxLengthOfServiceContext.executeStrategy();
     }
 
     /**
@@ -89,7 +89,7 @@ public class EmployeeService implements IEmployeeService {
      */
     @Override
     public List<Character> mostCommonCharactersInEmployeesNames(int count) throws IOException {
-        Map<Character, Integer> characterIntegerMap = operationFindMostCommonCharacters.doOperation();
+        Map<Character, Integer> characterIntegerMap = mostCommonCharactersContext.executeStrategy();
         if (count > characterIntegerMap.size()) {
             count = characterIntegerMap.size();
         }
@@ -120,10 +120,10 @@ public class EmployeeService implements IEmployeeService {
         while (employeeIterator.hasNext()) {
             Employee employee = employeeIterator.next();
             counter++;
-            operationCalculateAverageAge.doOperation(employee);
-            operationCalculateAverageLengthOfService.doOperation(employee);
-            operationFindMaxLengthOfService.doOperation(employee);
-            operationFindMostCommonCharacters.doOperation(employee);
+            averageAgeContext.executeStrategy(employee);
+            averageLengthContext.executeStrategy(employee);
+            maxLengthOfServiceContext.executeStrategy(employee);
+            mostCommonCharactersContext.executeStrategy(employee);
         }
     }
 
