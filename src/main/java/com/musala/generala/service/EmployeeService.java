@@ -13,34 +13,31 @@ import java.util.*;
 public class EmployeeService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
     private EmployeeIteratorFactory employeeIteratorFactory;
-    private List<Strategy> strategies;
 
     public EmployeeService(EmployeeIteratorFactory employeeIteratorFactory) {
-        int count = 3;
         this.employeeIteratorFactory = employeeIteratorFactory;
-        strategies = Arrays.asList(new CalculateAverageAge(), new CalculateAverageLengthOfService()
-                , new FindMaxLengthOfService(), new FindMostCommonCharacters(count));
     }
 
     public void logEmployeeInfo() throws IOException, NoEmployeesException {
-        addEmployees();
+        Strategy[] strategies = new Strategy[] {new CalculateAverageAge(), new CalculateAverageLengthOfService()
+                , new FindMaxLengthOfService(), new FindMostCommonCharacters(3)};
+        addEmployees(strategies);
         for (Strategy strategy : strategies) {
-            LOGGER.info(strategy.getName() + strategy.returnResult());
+            LOGGER.info(strategy.getName()  + ": " + strategy.returnResult());
         }
     }
 
-    private boolean validateEmployeeIterator(Iterator<Employee> employeeIterator) {
-        return employeeIterator.hasNext();
-    }
-
-    private void addEmployees() throws IOException, NoEmployeesException {
+    private void addEmployees(Strategy... strategies) throws IOException, NoEmployeesException {
         Iterator<Employee> employeeIterator = this.employeeIteratorFactory.createEmployeeIterator();
-        if (!validateEmployeeIterator(employeeIterator)) {
+        if (!employeeIterator.hasNext()) {
             throw new NoEmployeesException("There are no employees");
         }
         while (employeeIterator.hasNext()) {
             Employee employee = employeeIterator.next();
-            strategies.forEach(s -> s.addEmployee(employee));
+            for (Strategy strategy: strategies) {
+                strategy.addEmployee(employee);
+            }
         }
     }
+
 }

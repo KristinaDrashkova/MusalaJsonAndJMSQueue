@@ -2,6 +2,10 @@ package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
+/**
+ * Returns the calculated average age
+ * from all the employees
+ */
 public class CalculateAverageAge implements Strategy {
     private double age;
     private double counter;
@@ -14,15 +18,9 @@ public class CalculateAverageAge implements Strategy {
 
     @Override
     public String getName() {
-        return "Average age of employees: ";
+        return "Average age of employees";
     }
 
-    /**
-     * Returns the calculated average age
-     * from all the employees
-     *
-     * @return calculated average age
-     */
     @SuppressWarnings("unchecked")
     @Override
     public Double returnResult() {

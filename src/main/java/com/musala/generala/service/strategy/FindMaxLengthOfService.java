@@ -2,6 +2,11 @@ package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
+
+/**
+ * Returns the maximum length of service
+ * from all the employees
+ */
 public class FindMaxLengthOfService implements Strategy {
     private double maxLengthOfService = 0;
 
@@ -14,15 +19,9 @@ public class FindMaxLengthOfService implements Strategy {
 
     @Override
     public String getName() {
-        return "Maximum length of service among all employees: ";
+        return "Maximum length of service among all employees";
     }
 
-    /**
-     * Returns the maximum length of service
-     * from all the employees
-     *
-     * @return the maximum length of service
-     */
     @SuppressWarnings("unchecked")
     @Override
     public Double returnResult() {

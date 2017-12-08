@@ -2,6 +2,10 @@ package com.musala.generala.service.strategy;
 
 import com.musala.generala.models.Employee;
 
+/**
+ * Returns calculated average length of service
+ * from all the employees
+ */
 public class CalculateAverageLengthOfService implements Strategy {
     private double lengthOfService;
     private double counter;
@@ -14,15 +18,9 @@ public class CalculateAverageLengthOfService implements Strategy {
 
     @Override
     public String getName() {
-        return "Average length of service of the employees: ";
+        return "Average length of service of the employees";
     }
 
-    /**
-     * Returns calculated average length of service
-     * from all the employees
-     *
-     * @return calculated average length of service
-     */
     @SuppressWarnings("unchecked")
     @Override
     public Double returnResult() {

@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Returns list of the first @count most common characters
+ * from all the names of all the employee names
+ */
 public class FindMostCommonCharacters implements Strategy {
     private Map<Character, Integer> characterIntegerMap;
     private int count;
@@ -17,11 +21,10 @@ public class FindMostCommonCharacters implements Strategy {
         this.count = count;
     }
 
-    /**
-     * Adds to collection all the characters
-     * in the names of the employee
-     * with the number of their occurrences as a value
-     */
+    /*Adds to collection all the characters
+    in the names of the employee
+    with the number of their occurrences as a value
+    */
     @Override
     public void addEmployee(Employee employee) {
         for (char ch : employee.getName().toCharArray()) {
@@ -35,7 +38,7 @@ public class FindMostCommonCharacters implements Strategy {
 
     @Override
     public String getName() {
-        return "First " + count + " most common characters: ";
+        return String.format("First %s most common characters", count);
     }
 
     @SuppressWarnings("unchecked")
@@ -44,13 +47,6 @@ public class FindMostCommonCharacters implements Strategy {
         return mostCommonCharactersInEmployeesNames();
     }
 
-    /**
-     * Returns list of the first @count most common characters
-     * from all the names of all the employee names
-     *
-     * @return list of the first @count most common characters
-     * from all the names
-     */
     private List<Character> mostCommonCharactersInEmployeesNames() {
         if (count > characterIntegerMap.size()) {
             count = characterIntegerMap.size();

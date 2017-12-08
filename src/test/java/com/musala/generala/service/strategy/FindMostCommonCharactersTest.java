@@ -26,11 +26,6 @@ class FindMostCommonCharactersTest {
     }
 
     @Test
-    void getNameShouldWorkCorrectly() {
-        Assert.assertEquals("First " + count + " most common characters: ", strategy.getName());
-    }
-
-    @Test
     @SuppressWarnings("unchecked")
     void returnResultShouldWorkCorrectly() {
         strategy.addEmployee(NORMAN);

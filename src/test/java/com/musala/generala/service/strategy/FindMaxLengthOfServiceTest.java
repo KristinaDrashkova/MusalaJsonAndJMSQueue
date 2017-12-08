@@ -20,11 +20,6 @@ class FindMaxLengthOfServiceTest {
     }
 
     @Test
-    void getNameShouldWorkCorrectly() {
-        Assert.assertEquals("Maximum length of service among all employees: ", strategy.getName());
-    }
-
-    @Test
     void returnResultShouldWorkCorrectlyWithNormalData() {
         strategy.addEmployee(NORMAN);
         strategy.addEmployee(NORBERT);

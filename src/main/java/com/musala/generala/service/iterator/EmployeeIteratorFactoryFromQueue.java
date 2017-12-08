@@ -67,26 +67,15 @@ public class EmployeeIteratorFactoryFromQueue implements EmployeeIteratorFactory
             Queue queue = session.createQueue(QUEUE_NAME);
             MessageConsumer consumer = session.createConsumer(queue);
 
-            while (true) {
-                Message message = consumer.receive(500);
-                if (message instanceof TextMessage) {
-                    String m = ((TextMessage) message).getText();
-                    if (!m.isEmpty()) {
-                        data.append(m.substring(1, m.length() - 1).concat(","));
-                    }
-                } else {
-                    session.close();
-                    connection.close();
-                    break;
-                }
+            Message message = consumer.receive();
+            if (message instanceof TextMessage) {
+                data.append(((TextMessage) message).getText());
             }
         } catch (JMSException e) {
             LOGGER.error("There was problem with the connection to MQ");
             throw e;
         }
-        if (!data.toString().isEmpty()) {
-            data.deleteCharAt(data.length() - 1).insert(0, "[").append("]");
-        }
+        connection.close();
         return data.toString();
     }
 }

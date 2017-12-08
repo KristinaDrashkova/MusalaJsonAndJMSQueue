@@ -22,10 +22,6 @@ class CalculateAverageLengthOfServiceTest {
         Assert.assertEquals(1, counterField.getDouble(strategy), DELTA);
     }
 
-    @Test
-    void getNameShouldWorkCorrectly() {
-        Assert.assertEquals("Average length of service of the employees: ", strategy.getName());
-    }
 
     @Test
     void returnResultShouldWorkCorrectlyWithNormalData() {

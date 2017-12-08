@@ -23,11 +23,6 @@ class CalculateAverageAgeTest {
     }
 
     @Test
-    void getNameShouldWorkCorrectly() {
-        Assert.assertEquals("Average age of employees: ", strategy.getName());
-    }
-
-    @Test
     void returnResultShouldWorkCorrectlyWithNormalData() {
         strategy.addEmployee(NORMAN);
         strategy.addEmployee(NORBERT);
