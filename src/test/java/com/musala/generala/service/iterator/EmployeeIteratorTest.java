@@ -1,40 +1,44 @@
 package com.musala.generala.service.iterator;
 
-import com.musala.generala.models.Employee;
-import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.jms.JMSException;
-import javax.json.stream.JsonParser;
-import java.io.IOException;
+import javax.json.stream.JsonParsingException;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Iterator;
 
 
 public class EmployeeIteratorTest {
-    private static final String APPLICATION_PROPERTIES_FILE_PATH = "src/main/resources/application.properties";
-    private static final String BROKER_URL = "tcp://localhost:61616";
-    private JsonParser mockedParser;
+    private static final String FILE_NAME = "src/test/resources/employees.json";
+    private static final String EMPTY_FILE_NAME = "src/test/resources/employees empty file.json";
+    private EmployeeIteratorFactory mockedEmployeeIteratorFactory;
+    private Iterator employeeIterator;
+    private Reader reader;
 
     @Before
-    public void initialize() {
-        mockedParser = Mockito.mock(JsonParser.class);
+    public void initialize() throws IOException {
+        reader = new BufferedReader(new FileReader(FILE_NAME));
+        mockedEmployeeIteratorFactory = Mockito.mock(EmployeeIteratorFactoryFromQueue.class);
+        Mockito.when(mockedEmployeeIteratorFactory
+                .createEmployeeIterator()).thenReturn(new EmployeeIterator(reader, new HashMap<>()));
     }
 
-    @Test()
-    public void hasNextShouldReturnFalseWithEmptyCollection() throws IOException, JMSException {
-        Mockito.when(mockedParser.hasNext()).thenReturn(false);
-        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL)
-                .createEmployeeIterator();
+    @Test(expected = JsonParsingException.class)
+    public void shouldThrowExceptionWithEmptyCollection() throws IOException, JMSException {
+        reader = new BufferedReader(new FileReader(EMPTY_FILE_NAME));
+        Mockito.when(mockedEmployeeIteratorFactory
+                .createEmployeeIterator()).thenReturn(new EmployeeIterator(reader, new HashMap<>()));
+        employeeIterator = mockedEmployeeIteratorFactory.createEmployeeIterator();
         Assert.assertEquals(false, employeeIterator.hasNext());
     }
 
     @Test
     public void hasNextAndNextShouldWorkCorrectly() throws IOException, JMSException {
-        Iterator<Employee> employeeIterator = new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL)
-                .createEmployeeIterator();
+        employeeIterator = mockedEmployeeIteratorFactory.createEmployeeIterator();
         Assert.assertEquals(true, employeeIterator.hasNext());
         employeeIterator.next();
         Assert.assertEquals(true, employeeIterator.hasNext());

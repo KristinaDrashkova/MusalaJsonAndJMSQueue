@@ -19,7 +19,7 @@ class CalculateAverageLengthOfServiceTest {
         Field counterField = strategy.getClass().getDeclaredField("counter");
         counterField.setAccessible(true);
         Assert.assertEquals(10.1, lengthOfServiceField.getDouble(strategy), DELTA);
-        Assert.assertEquals(1d, counterField.getDouble(strategy), DELTA);
+        Assert.assertEquals(1, counterField.getDouble(strategy), DELTA);
     }
 
     @Test

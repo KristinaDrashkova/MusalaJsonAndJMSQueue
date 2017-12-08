@@ -18,8 +18,8 @@ class CalculateAverageAgeTest {
         ageField.setAccessible(true);
         Field counterField = strategy.getClass().getDeclaredField("counter");
         counterField.setAccessible(true);
-        Assert.assertEquals(10d, ageField.getDouble(strategy), DELTA);
-        Assert.assertEquals(1d, counterField.getDouble(strategy), DELTA);
+        Assert.assertEquals(10, ageField.getDouble(strategy), DELTA);
+        Assert.assertEquals(1, counterField.getDouble(strategy), DELTA);
     }
 
     @Test
@@ -32,6 +32,6 @@ class CalculateAverageAgeTest {
         strategy.addEmployee(NORMAN);
         strategy.addEmployee(NORBERT);
         strategy.addEmployee(NORA);
-        Assert.assertEquals(20d, strategy.returnResult(), DELTA);
+        Assert.assertEquals(20, strategy.returnResult(), DELTA);
     }
 }

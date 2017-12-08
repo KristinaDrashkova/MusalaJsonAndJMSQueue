@@ -10,7 +10,6 @@ import java.util.Map;
 import static com.musala.generala.PredefinedEmployeeTestSubjects.*;
 
 class FindMostCommonCharactersTest {
-    private static final double DELTA = 1e-15;
     private Strategy strategy = new FindMostCommonCharacters(3);
 
     @Test

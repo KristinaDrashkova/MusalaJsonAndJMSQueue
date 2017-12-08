@@ -3,7 +3,6 @@ package com.musala.generala;
 import com.musala.generala.exeptions.NoEmployeesException;
 import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
 import com.musala.generala.service.EmployeeService;
-import com.musala.generala.service.ImplEmployeeService;
 import com.musala.generala.service.iterator.EmployeeIteratorFactory;
 
 import javax.jms.JMSException;
@@ -17,7 +16,7 @@ public class Main {
     public static void main(String[] args) throws NoEmployeesException, IOException, JMSException {
         EmployeeIteratorFactory employeeIteratorFactory =
                 new EmployeeIteratorFactoryFromQueue(APPLICATION_PROPERTIES_FILE_PATH, BROKER_URL);
-        EmployeeService employeeService = new ImplEmployeeService(employeeIteratorFactory);
+        EmployeeService employeeService = new EmployeeService(employeeIteratorFactory);
         employeeService.logEmployeeInfo();
     }
 }
