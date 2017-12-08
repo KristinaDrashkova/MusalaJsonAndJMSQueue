@@ -10,7 +10,8 @@ import java.util.Map;
 import static com.musala.generala.PredefinedEmployeeTestSubjects.*;
 
 class FindMostCommonCharactersTest {
-    private Strategy strategy = new FindMostCommonCharacters(3);
+    private int count = 3;
+    private Strategy strategy = new FindMostCommonCharacters(count);
 
     @Test
     @SuppressWarnings("unchecked")
@@ -26,7 +27,7 @@ class FindMostCommonCharactersTest {
 
     @Test
     void getNameShouldWorkCorrectly() {
-        Assert.assertEquals("First 3 most common characters: ", strategy.getName());
+        Assert.assertEquals("First " + count + " most common characters: ", strategy.getName());
     }
 
     @Test
@@ -37,5 +38,22 @@ class FindMostCommonCharactersTest {
         strategy.addEmployee(NORA);
         Character[] arr = ((ArrayList<Character>) this.strategy.returnResult()).toArray(new Character[3]);
         Assert.assertArrayEquals(new Character[]{'a', 'b', 'f'}, arr);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void returnResultShouldWorkCorrectlyWithLessThanCountCharacters() {
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        Character[] arr = ((ArrayList<Character>) this.strategy.returnResult()).toArray(new Character[2]);
+        Assert.assertArrayEquals(new Character[]{'A', 'B'}, arr);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void returnResultShouldWorkCorrectlyWithoutAnyInput() {
+        Character[] arr = ((ArrayList<Character>) this.strategy.returnResult()).toArray(new Character[0]);
+        Assert.assertArrayEquals(new Character[]{}, arr);
     }
 }

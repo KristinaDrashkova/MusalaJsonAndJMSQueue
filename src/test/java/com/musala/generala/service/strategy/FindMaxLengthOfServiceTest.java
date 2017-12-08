@@ -25,10 +25,18 @@ class FindMaxLengthOfServiceTest {
     }
 
     @Test
-    void returnResultShouldWorkCorrectly() {
+    void returnResultShouldWorkCorrectlyWithNormalData() {
         strategy.addEmployee(NORMAN);
         strategy.addEmployee(NORBERT);
         strategy.addEmployee(NORA);
         Assert.assertEquals(30.3, strategy.returnResult(), DELTA);
+    }
+
+    @Test
+    void returnResultShouldWorkCorrectlyWithCornerCaseMaxData() {
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        Assert.assertEquals(Double.MAX_VALUE, strategy.returnResult(), DELTA);
     }
 }

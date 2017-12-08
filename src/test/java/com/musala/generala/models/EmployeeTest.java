@@ -1,6 +1,5 @@
 package com.musala.generala.models;
 
-import com.musala.generala.models.Employee;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

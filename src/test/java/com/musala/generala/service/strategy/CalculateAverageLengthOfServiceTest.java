@@ -28,10 +28,18 @@ class CalculateAverageLengthOfServiceTest {
     }
 
     @Test
-    void returnResultShouldWorkCorrectly() {
+    void returnResultShouldWorkCorrectlyWithNormalData() {
         strategy.addEmployee(NORMAN);
         strategy.addEmployee(NORBERT);
         strategy.addEmployee(NORA);
         Assert.assertEquals(20.2, strategy.returnResult(), DELTA);
+    }
+
+    @Test
+    void returnResultShouldWorkCorrectlyWithCornerCaseMaxData() {
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        strategy.addEmployee(MAXIMILIAN);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, strategy.returnResult(), DELTA);
     }
 }
