@@ -70,7 +70,9 @@ public class EmployeeIteratorFactoryFromQueue implements EmployeeIteratorFactory
             while (true) {
                 Message message = consumer.receive(500);
                 if (message instanceof TextMessage) {
-                    data.append(((TextMessage) message).getText());
+                    String m = ((TextMessage) message).getText();
+                    m = m.substring(1, m.length() - 1).concat(",");
+                    data.append(m);
                 } else {
                     session.close();
                     connection.close();
@@ -81,6 +83,9 @@ public class EmployeeIteratorFactoryFromQueue implements EmployeeIteratorFactory
             LOGGER.error("There was problem with the connection to MQ");
             throw e;
         }
+        data.deleteCharAt(data.length() - 1);
+        data.insert(0,"[");
+        data.append("]");
         return data.toString();
     }
 }
