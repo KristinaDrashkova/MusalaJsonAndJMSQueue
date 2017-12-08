@@ -1,4 +1,4 @@
-package com.musala.generala;
+package com.musala.generala.service.iterator;
 
 import com.musala.generala.models.Employee;
 import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;

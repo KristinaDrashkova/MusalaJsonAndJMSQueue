@@ -1,7 +1,5 @@
-package com.musala.generala;
+package com.musala.generala.service.iterator;
 
-import com.musala.generala.service.iterator.EmployeeIteratorFactoryFromQueue;
-import com.musala.generala.service.iterator.EmployeeIteratorFactory;
 import org.junit.Test;
 
 import java.io.IOException;

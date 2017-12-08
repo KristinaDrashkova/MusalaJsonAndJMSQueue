@@ -1,4 +1,4 @@
-package com.musala.generala;
+package com.musala.generala.models;
 
 import com.musala.generala.models.Employee;
 import org.junit.Before;
